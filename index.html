@@ -115,6 +115,7 @@
       <button class="advanced" onclick="appendToExpression('^2')">x²</button>
       <button class="advanced" onclick="appendToExpression('^3')">x³</button>
       <button class="advanced" onclick="appendToExpression('!')">!</button>
+      <button class="advanced" onclick="appendToExpression(',')">,</button>
       <button class="clear" onclick="clearDisplay()">C</button>
     </div>
   </div>
@@ -175,6 +176,10 @@ function calculateExpression() {
   } else {
     expression += value;
   }
+  updateDisplay();
+}
+    function appendToExpression(value) {
+  expression += value;
   updateDisplay();
 }
     function clearDisplay() {
