@@ -110,8 +110,7 @@
       <button class="advanced" onclick="appendToExpression('tan(')">tan</button>
       <button class="advanced" onclick="appendToExpression('log(')">log</button>
       <button class="advanced" onclick="appendToExpression('√(')">√</button>
-      <!-- 這裡直接用 root( 而非 x√( -->
-      <button class="advanced" onclick="appendToExpression('root(')">x√</button>
+      <button class="advanced" onclick="appendToExpression('^')">xʸ</button>
       <button class="advanced" onclick="appendToExpression('^2')">x²</button>
       <button class="advanced" onclick="appendToExpression('^3')">x³</button>
       <button class="advanced" onclick="appendToExpression('!')">!</button>
@@ -153,31 +152,24 @@ function calculateExpression() {
     const tan = (deg) => Math.tan((deg * Math.PI) / 180);
     const log = (value) => Math.log10(value);
     const sqrt = (value) => Math.sqrt(value);
-    const root = (x, y) => Math.pow(y, 1 / x); // x次方根計算公式
+    const root = (x, y) => Math.pow(y, 1 / x); // x次方根公式
 
+    // 解析表達式，處理次方運算符
     const parsedExpression = expression
-      .replace(/\^2/g, '**2')
-      .replace(/\^3/g, '**3')
+      .replace(/\^/g, '**') // 使用 JavaScript 的指數運算符
       .replace(/√\(([^)]+)\)/g, 'sqrt($1)')
-      .replace(/root\(([^,]+),([^)]+)\)/g, 'root($1, $2)') // 支援 root(x, y)
+      .replace(/root\(([^,]+),([^)]+)\)/g, 'root($1, $2)')
       .replace(/(\d+)!/g, 'factorial($1)');
 
-    let result = eval(parsedExpression);
-    result = Math.round(result * 1e10) / 1e10; // 四捨五入避免浮點數問題
+    let result = eval(parsedExpression); // 使用 eval 計算解析後的表達式
+    result = Math.round(result * 1e10) / 1e10; // 防止浮點數誤差
     expression = result.toString();
   } catch (error) {
     expression = 'Error';
   }
   updateDisplay();
 }
-    function appendToExpression(value) {
-  if (value === 'root(') {
-    expression += 'root('; // 初始加入 x√ 表達式
-  } else {
-    expression += value;
-  }
-  updateDisplay();
-}
+
     function appendToExpression(value) {
   expression += value;
   updateDisplay();
