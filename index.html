@@ -110,8 +110,8 @@
       <button class="advanced" onclick="appendToExpression('tan(')">tan</button>
       <button class="advanced" onclick="appendToExpression('log(')">log</button>
       <button class="advanced" onclick="appendToExpression('√(')">√</button>
-      <!-- 這裡直接用 cbrt( 而非 ³√( -->
-      <button class="advanced" onclick="appendToExpression('cbrt(')">³√</button>
+      <!-- 這裡直接用 root( 而非 x√( -->
+      <button class="advanced" onclick="appendToExpression('root(')">x√</button>
       <button class="advanced" onclick="appendToExpression('^2')">x²</button>
       <button class="advanced" onclick="appendToExpression('^3')">x³</button>
       <button class="advanced" onclick="appendToExpression('!')">!</button>
@@ -145,30 +145,39 @@
       return result;
     }
 
-    function calculateExpression() {
-      try {
-        const sin = (deg) => Math.sin((deg * Math.PI) / 180);
-        const cos = (deg) => Math.cos((deg * Math.PI) / 180);
-        const tan = (deg) => Math.tan((deg * Math.PI) / 180);
-        const log = (value) => Math.log10(value);
-        const sqrt = (value) => Math.sqrt(value);
+function calculateExpression() {
+  try {
+    const sin = (deg) => Math.sin((deg * Math.PI) / 180);
+    const cos = (deg) => Math.cos((deg * Math.PI) / 180);
+    const tan = (deg) => Math.tan((deg * Math.PI) / 180);
+    const log = (value) => Math.log10(value);
+    const sqrt = (value) => Math.sqrt(value);
 
-        // 不再替換 ³√，因為我們已經直接在按鈕上放 cbrt(
-        const parsedExpression = expression
-          .replace(/\^2/g, '**2')
-          .replace(/\^3/g, '**3')
-          .replace(/√\(([^)]+)\)/g, 'sqrt($1)')
-          .replace(/(\d+)!/g, 'factorial($1)');
+    // x次方根的語法：root(a,b) => b**(1/a)
+    const parsedExpression = expression
+      .replace(/\^2/g, '**2')
+      .replace(/\^3/g, '**3')
+      .replace(/√\(([^)]+)\)/g, 'sqrt($1)')
+      .replace(/root\(([^,]+),([^)]+)\)/g, '($2)**(1/($1))') // 新增解析
 
-        let result = eval(parsedExpression);
-        result = Math.round(result * 1e10) / 1e10;
-        expression = result.toString();
-      } catch (error) {
-        expression = 'Error';
-      }
-      updateDisplay();
-    }
+      .replace(/(\d+)!/g, 'factorial($1)');
 
+    let result = eval(parsedExpression);
+    result = Math.round(result * 1e10) / 1e10; // 限制小數點精度
+    expression = result.toString();
+  } catch (error) {
+    expression = 'Error';
+  }
+  updateDisplay();
+}
+    function appendToExpression(value) {
+  if (value === 'root(') {
+    expression += 'root(,)' // 引導輸入 x 和數值
+  } else {
+    expression += value;
+  }
+  updateDisplay();
+}
     function clearDisplay() {
       expression = '';
       updateDisplay();
