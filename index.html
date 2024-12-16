@@ -153,7 +153,7 @@ function calculateExpression() {
     const log = (value) => Math.log10(value);
     const sqrt = (value) => Math.sqrt(value);
 
-    // x次方根的語法：root(a,b) => b**(1/a)
+     // 不再替換 x√，因為我們已經直接在按鈕上放 root(
     const parsedExpression = expression
       .replace(/\^2/g, '**2')
       .replace(/\^3/g, '**3')
